@@ -1,4 +1,4 @@
-package com.golden.filme_app.exception;
+package com.golden.movie_app.exception;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

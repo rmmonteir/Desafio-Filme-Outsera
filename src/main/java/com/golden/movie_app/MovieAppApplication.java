@@ -1,13 +1,13 @@
-package com.golden.filme_app;
+package com.golden.movie_app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FilmeAppApplication {
+public class MovieAppApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FilmeAppApplication.class, args);
+		SpringApplication.run(MovieAppApplication.class, args);
 	}
 
 }
