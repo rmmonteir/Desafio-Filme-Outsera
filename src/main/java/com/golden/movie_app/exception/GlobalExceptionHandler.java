@@ -1,4 +1,4 @@
-package com.golden.filme_app.exception;
+package com.golden.movie_app.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +9,8 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Tratar exceções de processamento de CSV
-    @ExceptionHandler(CsvProcessingException.class)
-    public ResponseEntity<ApiErrorResponse> handleCsvProcessingException(CsvProcessingException ex) {
+    @ExceptionHandler(ProcessingException.class)
+    public ResponseEntity<ApiErrorResponse> handleCsvProcessingException(ProcessingException ex) {
         ApiErrorResponse response = new ApiErrorResponse(
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -20,7 +19,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Tratar exceções de arquivo muito grande
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         ApiErrorResponse response = new ApiErrorResponse(
@@ -31,7 +29,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
-    // Tratar exceções genéricas
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
         ApiErrorResponse response = new ApiErrorResponse(

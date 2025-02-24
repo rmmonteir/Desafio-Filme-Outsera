@@ -1,4 +1,4 @@
-package com.golden.filme_app;
+package com.golden.movie_app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

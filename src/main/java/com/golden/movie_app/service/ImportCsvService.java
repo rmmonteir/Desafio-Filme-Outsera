@@ -1,8 +1,8 @@
-package com.golden.filme_app.service;
+package com.golden.movie_app.service;
 
-import com.golden.filme_app.entity.Movie;
-import com.golden.filme_app.exception.CsvProcessingException;
-import com.golden.filme_app.repository.MovieRepository;
+import com.golden.movie_app.entity.Movie;
+import com.golden.movie_app.exception.ProcessingException;
+import com.golden.movie_app.repository.MovieRepository;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVParser;
@@ -29,26 +29,27 @@ public class ImportCsvService {
     @EventListener(ApplicationReadyEvent.class)
     public void loadCsvData() {
         String csvFile = "src/main/resources/movielist.csv"; // Caminho do arquivo CSV local
-        csvProcessing(csvFile);
+        csvLoadProcessing(csvFile);
     }
 
-    public void csvProcessing(MultipartFile arquivoCsv) {
+    public void csvLoadProcessing(MultipartFile arquivoCsv) {
         try (Reader reader = new InputStreamReader(arquivoCsv.getInputStream())) {
-            csvProcessing(reader);
+            movieRepository.deleteAll();
+            csvLoadProcessing(reader);
         } catch (IOException e) {
-            throw new CsvProcessingException("Erro ao ler o arquivo CSV via API: " + e.getMessage(), e);
+            throw new ProcessingException("Erro ao ler o arquivo CSV via API: " + e.getMessage(), e);
         }
     }
 
-    private void csvProcessing(String caminhoArquivo) {
+    private void csvLoadProcessing(String caminhoArquivo) {
         try (Reader reader = new java.io.FileReader(caminhoArquivo)) {
-            csvProcessing(reader);
+            csvLoadProcessing(reader);
         } catch (IOException e) {
-            throw new CsvProcessingException("Erro ao ler o arquivo CSV: " + e.getMessage(), e);
+            throw new ProcessingException("Erro ao ler o arquivo CSV: " + e.getMessage(), e);
         }
     }
 
-    private void csvProcessing(Reader reader) {
+    private void csvLoadProcessing(Reader reader) {
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(';')
                 .build();
@@ -65,7 +66,7 @@ public class ImportCsvService {
             while ((line = csvReader.readNext()) != null) {
                 try {
                     if (line.length < 5) {
-                        throw new CsvProcessingException("Linha mal formatada: número insuficiente de colunas.");
+                        throw new ProcessingException("Linha mal formatada: número insuficiente de colunas.");
                     }
 
                     Movie csvFileEntity = importarCsvParaObjeto(line);
@@ -73,14 +74,14 @@ public class ImportCsvService {
                         validRecords.add(csvFileEntity);
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new CsvProcessingException("Erro ao processar linha: " + String.join(";", line), e);
+                    throw new ProcessingException("Erro ao processar linha: " + String.join(";", line), e);
                 }
             }
 
             movieRepository.saveAll(validRecords);
 
         } catch (IOException | CsvValidationException e) {
-            throw new CsvProcessingException("Erro ao processar o arquivo CSV: " + e.getMessage(), e);
+            throw new ProcessingException("Erro ao processar o arquivo CSV: " + e.getMessage(), e);
         }
     }
 
@@ -99,8 +100,9 @@ public class ImportCsvService {
             if (produtor == null || produtor.isEmpty()) {
                 throw new IllegalArgumentException("Produtores inválidos ou ausentes.");
             }
-            String ganhador = linhaCsv.length > 4 ? linhaCsv[4] : null;
-            return new Movie(releaseYear, title, studio, produtor, ganhador);
+            Integer winner = linhaCsv.length > 4 ? ("yes".equalsIgnoreCase(linhaCsv[4]) ? 1 : 0) : 0;
+
+            return new Movie(releaseYear, title, studio, produtor, winner);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Ano inválido: " + linhaCsv[0], e);
         } catch (ArrayIndexOutOfBoundsException e) {

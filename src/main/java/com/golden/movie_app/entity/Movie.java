@@ -1,4 +1,4 @@
-package com.golden.filme_app.entity;
+package com.golden.movie_app.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,9 +20,9 @@ public class Movie {
     private String title;
     private String studio;
     private String producer;
-    private String winner;
+    private Integer winner;
 
-    public Movie(Integer release_year, String title, String studio, String producer, String winner) {
+    public Movie(Integer release_year, String title, String studio, String producer, Integer winner) {
         this.release_year = release_year;
         this.title = title;
         this.studio = studio;
