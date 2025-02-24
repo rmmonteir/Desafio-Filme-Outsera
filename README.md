@@ -1,7 +1,6 @@
 Desafio - Outsera - Golden Raspberry Awards
 
 Este projeto é uma API RESTful para gerenciar filmes e calcular intervalos de premiação com base em dados de filmes vencedores.
-Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado:
 
