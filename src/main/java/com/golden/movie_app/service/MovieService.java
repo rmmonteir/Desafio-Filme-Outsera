@@ -43,7 +43,7 @@ public class MovieService {
 
     public AwardIntervalResponse getAwardIntervals() {
         // Busca todos os filmes vencedores
-        List<Movie> winningMovies = movieRepository.findByWinner(Contants.GANHADOR);
+        List<Movie> winningMovies = movieRepository.findByWinner(Contants.WINNER);
         // Mapa para armazenar os intervalos de cada produtor
         Map<String, List<Integer>> awardsByProducer = new HashMap<>();
 

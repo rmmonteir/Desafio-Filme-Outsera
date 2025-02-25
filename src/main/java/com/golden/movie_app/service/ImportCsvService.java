@@ -32,7 +32,7 @@ public class ImportCsvService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadCsvData() {
-        String csvFile = Contants.CAMINHO_CSV;
+        String csvFile = Contants.DIR_CSV;
         csvLoadProcessing(csvFile);
     }
 
