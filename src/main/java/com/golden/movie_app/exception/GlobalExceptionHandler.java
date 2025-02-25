@@ -26,9 +26,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         ApiErrorResponse response = new ApiErrorResponse(
-                messageSource.getMessage("csv.file.size",null, null),
+                messageSource.getMessage("error.csv.file.size",null, null),
                 HttpStatus.PAYLOAD_TOO_LARGE.value(),
-                messageSource.getMessage("csv.file.size.large",null, null)
+                messageSource.getMessage("error.csv.file.size.large",null, null)
         );
         return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
     }

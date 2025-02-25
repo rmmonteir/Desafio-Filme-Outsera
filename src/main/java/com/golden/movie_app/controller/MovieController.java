@@ -63,7 +63,7 @@ public class MovieController {
             importCsvService.csvLoadProcessing(file);
             return ResponseEntity.ok(messageSource.getMessage("csv.file.ok",null, null));
         } catch (Exception e) {
-            throw new ProcessingException(messageSource.getMessage("csv.file.processing.error",new Object[]{e.getMessage()}, null) , e);
+            throw new ProcessingException(messageSource.getMessage("error.csv.file.processing",new Object[]{e.getMessage()}, null) , e);
         }
     }
     @GetMapping("/intervalo-premiacao")
