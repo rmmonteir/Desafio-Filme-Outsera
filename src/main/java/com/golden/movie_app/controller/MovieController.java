@@ -6,6 +6,7 @@ import com.golden.movie_app.exception.ProcessingException;
 import com.golden.movie_app.service.ImportCsvService;
 import com.golden.movie_app.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,8 @@ public class MovieController {
     ImportCsvService importCsvService;
     @Autowired
     private MovieService movieService;
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping
     public ResponseEntity<List<Movie>> listAllMovies() {
@@ -58,9 +61,9 @@ public class MovieController {
     public ResponseEntity uploadCsv(@RequestParam("file") MultipartFile file) {
         try {
             importCsvService.csvLoadProcessing(file);
-            return ResponseEntity.ok("Arquivo CSV processado com sucesso!");
+            return ResponseEntity.ok(messageSource.getMessage("csv.file.ok",null, null));
         } catch (Exception e) {
-            throw new ProcessingException("Erro ao processar o arquivo CSV: " + e.getMessage(), e);
+            throw new ProcessingException(messageSource.getMessage("csv.file.processing.error",new Object[]{e.getMessage()}, null) , e);
         }
     }
     @GetMapping("/intervalo-premiacao")

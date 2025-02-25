@@ -4,6 +4,7 @@ import com.golden.movie_app.dto.AwardInterval;
 import com.golden.movie_app.dto.AwardIntervalResponse;
 import com.golden.movie_app.entity.Movie;
 import com.golden.movie_app.repository.MovieRepository;
+import com.golden.movie_app.util.Contants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -42,7 +43,7 @@ public class MovieService {
 
     public AwardIntervalResponse getAwardIntervals() {
         // Busca todos os filmes vencedores
-        List<Movie> winningMovies = movieRepository.findByWinner(1);
+        List<Movie> winningMovies = movieRepository.findByWinner(Contants.GANHADOR);
         // Mapa para armazenar os intervalos de cada produtor
         Map<String, List<Integer>> awardsByProducer = new HashMap<>();
 

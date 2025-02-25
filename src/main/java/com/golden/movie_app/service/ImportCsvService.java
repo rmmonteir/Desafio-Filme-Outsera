@@ -10,9 +10,11 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.golden.movie_app.util.Contants;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,10 +27,12 @@ public class ImportCsvService {
 
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private MessageSource messageSource;
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadCsvData() {
-        String csvFile = "src/main/resources/movielist.csv"; // Caminho do arquivo CSV local
+        String csvFile = Contants.CAMINHO_CSV;
         csvLoadProcessing(csvFile);
     }
 
@@ -37,7 +41,7 @@ public class ImportCsvService {
             movieRepository.deleteAll();
             csvLoadProcessing(reader);
         } catch (IOException e) {
-            throw new ProcessingException("Erro ao ler o arquivo CSV via API: " + e.getMessage(), e);
+            throw new ProcessingException(messageSource.getMessage("error.csv.api.read",new Object[]{e.getMessage()}, null));
         }
     }
 
@@ -45,7 +49,7 @@ public class ImportCsvService {
         try (Reader reader = new java.io.FileReader(caminhoArquivo)) {
             csvLoadProcessing(reader);
         } catch (IOException e) {
-            throw new ProcessingException("Erro ao ler o arquivo CSV: " + e.getMessage(), e);
+            throw new ProcessingException(messageSource.getMessage("error.csv.read",new Object[]{e.getMessage()}, null));
         }
     }
 
@@ -66,7 +70,7 @@ public class ImportCsvService {
             while ((line = csvReader.readNext()) != null) {
                 try {
                     if (line.length < 5) {
-                        throw new ProcessingException("Linha mal formatada: número insuficiente de colunas.");
+                        throw new ProcessingException(messageSource.getMessage("error.csv.line",null, null));
                     }
 
                     Movie csvFileEntity = importarCsvParaObjeto(line);
@@ -74,14 +78,14 @@ public class ImportCsvService {
                         validRecords.add(csvFileEntity);
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new ProcessingException("Erro ao processar linha: " + String.join(";", line), e);
+                    throw new ProcessingException(messageSource.getMessage("error.csv.line.process",new Object[]{String.join(";", line)}, null));
                 }
             }
 
             movieRepository.saveAll(validRecords);
 
         } catch (IOException | CsvValidationException e) {
-            throw new ProcessingException("Erro ao processar o arquivo CSV: " + e.getMessage(), e);
+            throw new ProcessingException(messageSource.getMessage("error.csv.file.process",new Object[]{e.getMessage()}, null));
         }
     }
 
@@ -90,23 +94,23 @@ public class ImportCsvService {
             int releaseYear = Integer.parseInt(linhaCsv[0]);
             String title = linhaCsv[1];
             if (title == null || title.isEmpty()) {
-                throw new IllegalArgumentException("Título inválido ou ausente.");
+                throw new ProcessingException(messageSource.getMessage("error.invalid.title",null, null));
             }
             String studio = linhaCsv[2];
             if (studio == null || studio.isEmpty()) {
-                throw new IllegalArgumentException("Estúdios inválidos ou ausentes.");
+                throw new ProcessingException(messageSource.getMessage("error.invalid.studios",null, null));
             }
             String produtor = linhaCsv[3];
             if (produtor == null || produtor.isEmpty()) {
-                throw new IllegalArgumentException("Produtores inválidos ou ausentes.");
+                throw new ProcessingException(messageSource.getMessage("error.invalid.producers",null, null));
             }
             Integer winner = linhaCsv.length > 4 ? ("yes".equalsIgnoreCase(linhaCsv[4]) ? 1 : 0) : 0;
 
             return new Movie(releaseYear, title, studio, produtor, winner);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Ano inválido: " + linhaCsv[0], e);
+            throw new ProcessingException(messageSource.getMessage("error.invalid.year",new Object[]{linhaCsv[0]}, null));
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Linha mal formatada: numero insuficiente de colunas.", e);
+            throw new ProcessingException(messageSource.getMessage("error.malformed.line",null, null));
         }
     }
 }
